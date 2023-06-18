@@ -29,18 +29,9 @@ class DataProcessor:
     def process_data(data):
         DataProcessor.detect_outliers(data)
 
-        # Print the mean of the column
         print("Mean:", st.mean(data))
-        # Print the median of the column
         print("Median:", st.median(data))
-        # Print the standard deviation of the column
         print("Standard Deviation:", st.stdev(data))
-        # Print the variance of the column
         print("Variance:", st.variance(data))
-        # Print the mode of the column
         print("Mode:", st.mode(data))
-        # Print the quantiles of the column
         print("Quantiles:", st.quantiles(data))
-        # Print the outliers of the column
-        # DataProcessor.detect_outliers(result_array)
-        print("---------------------------------------------------------")
