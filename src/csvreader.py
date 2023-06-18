@@ -1,5 +1,6 @@
 import csv
 
+
 class CSVReader:
     def __init__(self, filename):
         self.filename = filename
@@ -20,8 +21,8 @@ class CSVReader:
             last_column_value = float(row[-1])
             last_column_array.append(last_column_value)
         return last_column_array
-    
-    
+
+
 # Example usage
 # filename = "data.csv"
 # reader = CSVReader(filename)
