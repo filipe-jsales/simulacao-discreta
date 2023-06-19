@@ -1,6 +1,7 @@
 import statistics as st
 import math as m
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class DataProcessor:
@@ -15,11 +16,11 @@ class DataProcessor:
         while i < len(data):
             value = data[i]
             if value < Q1 - 1.5 * A or value > Q3 + 1.5 * A:
-                print(value, " - Outlier Moderado")
+                # print(value, " - Outlier Moderado")
                 count_outlier_moderado += 1
                 count_total_outliers += 1
             if value < Q1 - 3 * A or value > Q3 + 3 * A:
-                print(value, " - Outlier Extremo")
+                # print(value, " - Outlier Extremo")
                 count_outlier_extremo += 1
                 count_total_outliers += 1
             i += 1
@@ -27,21 +28,33 @@ class DataProcessor:
         print("Total de Outliers Extremos: ", count_outlier_extremo)
         print("Total de Outliers: ", count_total_outliers)
 
-    def process_data(self, data):
+    def getMean(self, data):
+        return st.mean(data)
+    
+    def getMedian(self, data):
+        return st.median(data)
+    
+    def getMode(self, data):
+        return st.mode(data)
+    
+    def getStDev(self, data):
+        return st.stdev(data)
+    
+    def getMin(self, data):
+        return min(data)
+    
+    def getMax(self, data):
+        return max(data)
+
+    def processAndRemoveOutliers(self, data):
         self.detect_outliers(data)
         self.removeOutlierExtremo(data)
-        print("Mean:", st.mean(data))
-        print("Median:", st.median(data))
-        print("Standard Deviation:", st.stdev(data))
-        print("Variance:", st.variance(data))
-        print("Mode:", st.mode(data))
-        print("Quantiles:", st.quantiles(data))
 
     def getNumClasses(self, n):
         log = m.log10(n)
         k = 1 + 3.3 * log
-        print("Valor de k: ", k)
-        print("Valor de k aproximado: ", round(k))
+        # print("Valor de k: ", k)
+        # print("Valor de k aproximado: ", round(k))
         return round(k)
 
     def getClassLength(self, dados):
@@ -59,25 +72,22 @@ class DataProcessor:
         while i < len(dados):
             valor = dados[i]
             if valor < Q1 - 3 * A or valor > Q3 + 3 * A:
-                print(valor, " - Outlier Extremo")
+                # print(valor, " - Outlier Extremo")
                 dadosRemovidos.append(valor)
                 dados.remove(valor)
             i = i + 1
-        print("Dados após remoção de outliers extremos: ", dados)
         print("Dados removidos: ", dadosRemovidos)
         return dados
 
     def printInfoDados(self, dados):
-        self.removeOutlierExtremo(dados)
-
         print("DADOS INFORMADOS")
 
         ordered = sorted(dados)
-        print("Dados ordenados:", ordered)
+        # print("Dados ordenados:", ordered)
         print("Numero de classes:", self.getNumClasses(len(dados)))
         print("Tamanho de cada classe:", (max(dados) -
               min(dados)) / self.getNumClasses(len(dados)))
-        print("Tamanho", len(dados))
+        print("Quantidade de dados:", len(dados))
         print("Media:", st.mean(dados))
         print("Moda:", st.mode(dados))
         print("Mediana:", st.median(dados))
@@ -93,6 +103,24 @@ class DataProcessor:
             dados)[2]) / (st.median(dados) ** (3 / 2)))
 
         plt.hist(dados, bins=self.getNumClasses(len(dados)))
+        plt.title("Histograma")
         plt.show()
         plt.boxplot(dados)
+        plt.title("Boxplot")
+        plt.show()
+
+    
+    def getStFunction(self, x, mu, sigma):
+        return np.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * np.sqrt(2 * np.pi))
+
+    def plotFunction(self, data):
+        x = np.linspace(self.getMin(data), self.getMax(data))
+        mu = self.getMean(data)
+        sigma = self.getStDev(data)
+        y = self.getStFunction(x, mu, sigma)
+        plt.plot(x, y)
+        plt.xlabel('x')
+        plt.ylabel('f(x)')
+        plt.title('Normal Function')
+        plt.grid(True)
         plt.show()
