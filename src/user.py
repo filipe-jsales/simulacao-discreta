@@ -30,6 +30,6 @@ env.process(user_behavior(user))
 env.run(until=20)  # Run the simulation for 20 time units
 
 # Print the user's actions
-for action in user.user_actions:
-    order_id, action_name, action_time = action
-    print(f"Order ID: {order_id}, Action: {action_name}, Time: {action_time}")
+# for action in user.user_actions:
+#     order_id, action_name, action_time = action
+#     print(f"Order ID: {order_id}, Action: {action_name}, Time: {action_time}")

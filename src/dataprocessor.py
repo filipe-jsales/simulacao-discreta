@@ -128,3 +128,9 @@ class DataProcessor:
         plt.title('Normal Function')
         plt.grid(True)
         plt.show()
+
+    def get_unique_values(self, data):
+        unique_values = {}
+        for value in data:
+            unique_values[value] = True
+        return list(unique_values.keys())

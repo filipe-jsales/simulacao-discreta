@@ -18,7 +18,7 @@ class CSVReader:
         data = self.read_data()
         column_array  = []
         for row in data:
-            last_column_value = float(row[column_index])
+            last_column_value = int(row[column_index])
             column_array .append(last_column_value)
         return column_array 
     
