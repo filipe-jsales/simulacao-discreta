@@ -9,19 +9,17 @@ file_user_actions = "user_actions.csv"
 
 
 reader = csvreader.CSVReader(file_courier_actions_new)
+
 data = reader.read_data()
 
 csv_to_array = reader.transform_column_to_array(-1)
 processor = dataprocessor.DataProcessor()
 
 
-# processor.processAndRemoveOutliers(csv_to_array)
+processor.processAndRemoveOutliers(csv_to_array)
 processor.printInfoDados(csv_to_array)
 
 
-# processor.plotFunction(csv_to_array)
+processor.plotFunction(csv_to_array)
 
-# processor.getLen(csv_to_array)
-
-print("couriers:")
 processor.getLen(csv_to_array)
