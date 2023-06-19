@@ -45,6 +45,10 @@ class DataProcessor:
     
     def getMax(self, data):
         return max(data)
+    
+    def getLen(self, data):
+        print("Quantidade de dados:", len(data))
+        return len(data)
 
     def processAndRemoveOutliers(self, data):
         self.detect_outliers(data)

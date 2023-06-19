@@ -22,7 +22,14 @@ class CSVReader:
             last_column_array.append(last_column_value)
         return last_column_array
 
-
+    def transform_column_to_array(self, column_index):
+        data = self.read_data()
+        column_array  = []
+        for row in data:
+            last_column_value = float(row[column_index])
+            column_array .append(last_column_value)
+        return column_array 
+    
 # Example usage
 # filename = "data.csv"
 # reader = CSVReader(filename)

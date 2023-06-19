@@ -1,15 +1,27 @@
 from src import(courier, user, csvreader, dataprocessor)
 
-filename = "courier_actions_new.csv"
-reader = csvreader.CSVReader(filename)
+#define wich file to read
+file_courier_actions_new = "courier_actions_new.csv"
+file_couriers = "couriers.csv"
+file_orders = "orders.csv"
+file_users = "users.csv"
+file_user_actions = "user_actions.csv"
+
+
+reader = csvreader.CSVReader(file_courier_actions_new)
 data = reader.read_data()
 
-array_waiting_time_minutes_courier = reader.transform_last_column_to_array()
-
+csv_to_array = reader.transform_column_to_array(-1)
 processor = dataprocessor.DataProcessor()
-processor.processAndRemoveOutliers(array_waiting_time_minutes_courier)
-processor.printInfoDados(array_waiting_time_minutes_courier)
 
 
-processor.plotFunction(array_waiting_time_minutes_courier)
+# processor.processAndRemoveOutliers(csv_to_array)
+processor.printInfoDados(csv_to_array)
 
+
+# processor.plotFunction(csv_to_array)
+
+# processor.getLen(csv_to_array)
+
+print("couriers:")
+processor.getLen(csv_to_array)
