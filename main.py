@@ -1,7 +1,24 @@
+from src import(csvreader,dataprocessor )
 import argparse
 import simpy
 import matplotlib.pyplot as plt
 import random
+
+
+file_courier_actions_new = "courier_actions_new.csv"
+file_couriers = "couriers.csv"
+file_orders = "orders.csv"
+file_users = "users.csv"
+file_user_actions = "user_actions.csv"
+
+
+#tratamento de dados estatisticos
+reader = csvreader.CSVReader(file_courier_actions_new)
+
+data = reader.read_data()
+
+csv_to_array = reader.transform_column_to_array(-1)
+processor = dataprocessor.DataProcessor()
 
 class DeliverySystem:
     def __init__(self, env: simpy.Environment, n_weeks: int, n_drivers: int, n_deliveries: int):
@@ -21,16 +38,17 @@ class DeliverySystem:
             success_probability = self.drivers.capacity / (self.drivers.capacity + 1)
             if random.random() < success_probability:
                 self.successful_deliveries[driver_id] += 1
+                current_time = self.env.now + 4
+                print(f"Driver {driver_id} successfully delivered package {delivery} at time {current_time}")
             else:
                 self.refused_deliveries[driver_id] += 1
 
-            print(f"Driver {driver_id} is delivering package {delivery}")
             yield self.env.timeout(1)
 
     def run_delivery_system(self):
         for week in range(1, self.n_weeks + 1):
             print(f"Week {week}:")
-            weekly_successful_deliveries = 0
+            weekly_successful_deliveries = 0    
             weekly_refused_deliveries = 0
 
             for driver_id in range(1, self.drivers.capacity + 1):
@@ -91,8 +109,9 @@ def simulate_delivery_system(n_weeks, n_drivers, n_deliveries):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulator for a delivery system.")
     parser.add_argument("-w", "--weeks", type=int, default=4, help="Number of weeks to simulate.")
-    parser.add_argument("-d", "--drivers", type=int, default=1, help="Number of delivery drivers.")
-    parser.add_argument("-p", "--deliveries", type=int, default=100, help="Number of deliveries per driver.")
+    parser.add_argument("-d", "--drivers", type=int, default=5, help="Number of delivery drivers.")
+    parser.add_argument("-p", "--deliveries", type=int, default=2, help="Number of deliveries per driver.")
     args = parser.parse_args()
 
+    print(csv_to_array)
     simulate_delivery_system(args.weeks, args.drivers, args.deliveries)
