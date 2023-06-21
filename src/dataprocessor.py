@@ -57,8 +57,6 @@ class DataProcessor:
     def getNumClasses(self, n):
         log = m.log10(n)
         k = 1 + 3.3 * log
-        # print("Valor de k: ", k)
-        # print("Valor de k aproximado: ", round(k))
         return round(k)
 
     def getClassLength(self, dados):
@@ -76,7 +74,6 @@ class DataProcessor:
         while i < len(dados):
             valor = dados[i]
             if valor < Q1 - 3 * A or valor > Q3 + 3 * A:
-                # print(valor, " - Outlier Extremo")
                 dadosRemovidos.append(valor)
                 dados.remove(valor)
             i = i + 1
@@ -87,7 +84,6 @@ class DataProcessor:
         print("DADOS INFORMADOS")
 
         ordered = sorted(dados)
-        # print("Dados ordenados:", ordered)
         print("Numero de classes:", self.getNumClasses(len(dados)))
         print("Tamanho de cada classe:", (max(dados) -
               min(dados)) / self.getNumClasses(len(dados)))
@@ -134,3 +130,7 @@ class DataProcessor:
         for value in data:
             unique_values[value] = True
         return list(unique_values.keys())
+
+    def get_quantiles(self, data):
+        quantiles = st.quantiles(data)
+        return quantiles
