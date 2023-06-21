@@ -20,5 +20,12 @@ class CSVReader:
         for row in data:
             last_column_value = int(row[column_index])
             column_array .append(last_column_value)
-        return column_array 
-    
+        return column_array
+
+    def transform_column_to_array_str(self, column_index):
+        data = self.read_data()
+        column_array  = []
+        for row in data:
+            last_column_value = str(row[column_index])
+            column_array .append(last_column_value)
+        return column_array  

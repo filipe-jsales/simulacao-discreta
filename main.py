@@ -5,60 +5,86 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import random
+import statistics as st
 
-
-file_courier_actions_new = "courier_actions_new.csv"
-file_couriers = "couriers.csv"
-file_orders = "orders.csv"
-file_users = "users.csv"
-file_user_actions = "user_actions.csv"
-
-
-#tratamento de dados estatisticos
-reader = csvreader.CSVReader(file_courier_actions_new)
-
-data = reader.read_data()
-
-csv_to_array = reader.transform_column_to_array(-1)
-processor = dataprocessor.DataProcessor()
 
 class DeliverySystem:
     def __init__(self, env: simpy.Environment, n_weeks: int, n_drivers: int, n_deliveries: int):
         self.env = env
-        self.drivers = simpy.Resource(env, n_drivers)
+        self.couriers = simpy.Resource(env, n_drivers)
         self.n_weeks = n_weeks
         self.n_deliveries = n_deliveries
         self.successful_deliveries = {}
         self.refused_deliveries = {}
         self.weekly_stats = {}
 
-    def delivery_process(self, driver_id):
-        self.successful_deliveries[driver_id] = 0
-        self.refused_deliveries[driver_id] = 0
+    def get_deliver_time(self):
+        file_courier_actions_new = "courier_actions_new.csv"
+        # file_couriers = "couriers.csv"
+        # file_orders = "orders.csv"
+        # file_users = "users.csv"
+        # file_user_actions = "user_actions.csv"
 
-        for delivery in range(self.n_deliveries):
-            success_probability = self.drivers.capacity / (self.drivers.capacity + 1)
+
+        #tratamento de dados estatisticos
+        reader = csvreader.CSVReader(file_courier_actions_new)
+
+        data = reader.read_data()
+
+        csv_to_array = reader.transform_column_to_array_str(3)
+        # processor = dataprocessor.DataProcessor()
+        return csv_to_array 
+
+    def get_product_name(self):
+        file_products = "products.csv"
+        reader = csvreader.CSVReader(file_products)
+        csv_to_array = reader.transform_column_to_array_str(1)
+        return csv_to_array 
+
+    def delivery_process(self, courier_id):
+        self.successful_deliveries[courier_id] = 0
+        self.refused_deliveries[courier_id] = 0
+        array_time = self.get_deliver_time()
+        product_names = self.get_product_name()
+
+        for index, delivery in enumerate(range(self.n_deliveries)):
+            success_probability = self.couriers.capacity / (self.couriers.capacity + 1)
+            random_product_index = random.randint(0, len(product_names) - 1)
+            product_name = product_names[random_product_index]
             if random.random() < success_probability:
-                self.successful_deliveries[driver_id] += 1
-                current_time = self.env.now + 4
-                print(f"Driver {driver_id} successfully delivered package {delivery} at time {current_time}")
+                self.successful_deliveries[courier_id] += 1
+                current_time = array_time[index]  # Get the time from the array
+                print(f"Courier_id: {courier_id} successfully delivered {product_name} at {current_time}")
             else:
-                self.refused_deliveries[driver_id] += 1
+                self.refused_deliveries[courier_id] += 1
+                current_time = array_time[index]  # Get the time from the array
+                print(f"The user canceled the order {product_name} at time {current_time}")
 
             yield self.env.timeout(1)
 
+    
+    def get_courier_id(self):
+        file_courier_actions_new = "courier_actions_new.csv"
+        reader = csvreader.CSVReader(file_courier_actions_new)
+        csv_to_array = reader.transform_column_to_array(0)
+        return csv_to_array 
+
     def run_delivery_system(self):
+        courier_ids = self.get_courier_id()
+        num_couriers = min(len(courier_ids), self.couriers.capacity)  # Get the minimum of available couriers or driver capacity
+
         for week in range(1, self.n_weeks + 1):
             print(f"Week {week}:")
             weekly_successful_deliveries = 0
             weekly_refused_deliveries = 0
 
-            for driver_id in range(1, self.drivers.capacity + 1):
-                self.env.process(self.delivery_process(driver_id))
+            for i in range(1, num_couriers + 1):
+                courier_id = courier_ids[i - 1]  # Adjust index since courier_id list may start from index 0
+                self.env.process(self.delivery_process(courier_id))
                 yield self.env.timeout(1)
 
-                weekly_successful_deliveries += self.successful_deliveries[driver_id]
-                weekly_refused_deliveries += self.refused_deliveries[driver_id]
+                weekly_successful_deliveries += self.successful_deliveries[courier_id]
+                weekly_refused_deliveries += self.refused_deliveries[courier_id]
 
             self.weekly_stats[week] = {
                 "Successful Deliveries": weekly_successful_deliveries,
@@ -115,9 +141,29 @@ def simulate_delivery_system(n_weeks, n_drivers, n_deliveries):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulator for a delivery system.")
     parser.add_argument("-w", "--weeks", type=int, default=4, help="Number of weeks to simulate.")
-    parser.add_argument("-d", "--drivers", type=int, default=10, help="Number of delivery drivers.")
-    parser.add_argument("-p", "--deliveries", type=int, default=48, help="Number of deliveries per driver.")
+    parser.add_argument("-d", "--couriers", type=int, default=5, help="Number of delivery couriers.")
+    parser.add_argument("-p", "--deliveries", type=int, default=10, help="Number of deliveries per driver.")
     args = parser.parse_args()
+    
+    simulate_delivery_system(args.weeks, args.couriers, args.deliveries)
+    file_courier_actions_new = "courier_actions_new.csv"
+    file_couriers = "couriers.csv"
+    file_orders = "orders.csv"
+    file_users = "users.csv"
+    file_user_actions = "user_actions.csv"
 
-    print(csv_to_array)
-    simulate_delivery_system(args.weeks, args.drivers, args.deliveries)
+
+    #tratamento de dados estatisticos
+    reader = csvreader.CSVReader(file_courier_actions_new)
+
+    data = reader.read_data()
+
+    csv_to_array = reader.transform_column_to_array(-1)
+    processor = dataprocessor.DataProcessor()
+    processor.processAndRemoveOutliers(csv_to_array)
+    processor.printInfoDados(csv_to_array)
+
+
+    processor.plotFunction(csv_to_array)
+
+    processor.getLen(csv_to_array)
