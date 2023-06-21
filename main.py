@@ -141,8 +141,8 @@ def simulate_delivery_system(n_weeks, n_drivers, n_deliveries):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulator for a delivery system.")
     parser.add_argument("-w", "--weeks", type=int, default=4, help="Number of weeks to simulate.")
-    parser.add_argument("-d", "--couriers", type=int, default=5, help="Number of delivery couriers.")
-    parser.add_argument("-p", "--deliveries", type=int, default=10, help="Number of deliveries per driver.")
+    parser.add_argument("-d", "--couriers", type=int, default=2, help="Number of delivery couriers.")
+    parser.add_argument("-p", "--deliveries", type=int, default=244, help="Number of deliveries per driver.")
     args = parser.parse_args()
     
     simulate_delivery_system(args.weeks, args.couriers, args.deliveries)
@@ -153,17 +153,17 @@ if __name__ == "__main__":
     file_user_actions = "user_actions.csv"
 
 
-    #tratamento de dados estatisticos
-    reader = csvreader.CSVReader(file_courier_actions_new)
-
-    data = reader.read_data()
-
-    csv_to_array = reader.transform_column_to_array(-1)
-    processor = dataprocessor.DataProcessor()
-    processor.processAndRemoveOutliers(csv_to_array)
-    processor.printInfoDados(csv_to_array)
-
-
-    processor.plotFunction(csv_to_array)
-
-    processor.getLen(csv_to_array)
+    # #tratamento de dados estatisticos
+    # reader = csvreader.CSVReader(file_courier_actions_new)
+    #
+    # data = reader.read_data()
+    #
+    # csv_to_array = reader.transform_column_to_array(-1)
+    # processor = dataprocessor.DataProcessor()
+    # processor.processAndRemoveOutliers(csv_to_array)
+    # processor.printInfoDados(csv_to_array)
+    #
+    #
+    # processor.plotFunction(csv_to_array)
+    #
+    # processor.getLen(csv_to_array)
