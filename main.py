@@ -2,6 +2,8 @@ from src import(csvreader,dataprocessor )
 import argparse
 import simpy
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 import random
 
 
@@ -48,7 +50,7 @@ class DeliverySystem:
     def run_delivery_system(self):
         for week in range(1, self.n_weeks + 1):
             print(f"Week {week}:")
-            weekly_successful_deliveries = 0    
+            weekly_successful_deliveries = 0
             weekly_refused_deliveries = 0
 
             for driver_id in range(1, self.drivers.capacity + 1):
@@ -90,8 +92,12 @@ class DeliverySystem:
 
     def plot_delivery_stats(self, weeks, success_percentages, refused_percentages):
         plt.figure(figsize=(10, 5))
-        plt.bar(weeks, success_percentages, label='Successful Deliveries')
-        plt.bar(weeks, refused_percentages, bottom=success_percentages, label='Refused Deliveries')
+
+        delivery_success_data = pd.DataFrame({'Week':weeks, 'Successful Delivery':success_percentages, 'Refused Delivery':refused_percentages})
+        df_melted = pd.melt(delivery_success_data, id_vars=['Week'], value_vars=['Successful Delivery', 'Refused Delivery'],
+                            var_name='tipo', value_name='quantidade')
+        sns.set(style="whitegrid")
+        sns.barplot(x='Week', y='quantidade', hue='tipo', data=df_melted)
         plt.xlabel('Weeks')
         plt.ylabel('Percentage')
         plt.title('Delivery Statistics')
@@ -109,8 +115,8 @@ def simulate_delivery_system(n_weeks, n_drivers, n_deliveries):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulator for a delivery system.")
     parser.add_argument("-w", "--weeks", type=int, default=4, help="Number of weeks to simulate.")
-    parser.add_argument("-d", "--drivers", type=int, default=5, help="Number of delivery drivers.")
-    parser.add_argument("-p", "--deliveries", type=int, default=2, help="Number of deliveries per driver.")
+    parser.add_argument("-d", "--drivers", type=int, default=10, help="Number of delivery drivers.")
+    parser.add_argument("-p", "--deliveries", type=int, default=48, help="Number of deliveries per driver.")
     args = parser.parse_args()
 
     print(csv_to_array)
